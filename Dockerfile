@@ -21,6 +21,7 @@ COPY --from=builder /usr/local/cargo/bin/crossword /usr/local/bin/crossword
 # Install necessary system packages
 RUN apt-get update && apt-get install -y \
     gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy Python dependencies

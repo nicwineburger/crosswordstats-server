@@ -49,8 +49,7 @@ def update_database_and_plot():
     update_csv()
     generate_plot()
 
-    # Replace with your MinIO bucket name
-    bucket_name = "your-minio-bucket-name"
+    bucket_name = os.environ["MINIO_BUCKET_NAME"]
     upload_file_to_minio(bucket_name, LOCAL_CSV_FILENAME, CLOUD_CSV_FILENAME)
     upload_file_to_minio(bucket_name, LOCAL_PLOT_FILENAME, CLOUD_PLOT_FILENAME)
 
