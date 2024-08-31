@@ -1,8 +1,8 @@
-numpy>=1.21.0,<1.23.0  # Choose a compatible version range to avoid conflicts
-matplotlib>=3.4.0,<3.5.0  # Ensure compatibility with NumPy
-pillow>=8.0.0,<9.0.0  # Ensure compatibility with both Matplotlib and NumPy
-flask>=2.0.0
-minio>=7.0.0
-gunicorn>=20.0.0
+# Web server
+Flask
+gunicorn
+
+# MinIO
+minio
 
 -r plot/requirements.txt
