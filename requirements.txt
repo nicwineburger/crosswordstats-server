@@ -1,7 +1,9 @@
-google-cloud-storage
+# MinIO
+minio
 
 # Web server
 Flask
 gunicorn
+
 
 -r plot/requirements.txt
