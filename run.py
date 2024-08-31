@@ -31,7 +31,7 @@ def update_csv(nyt_token, start_date):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-    catch subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError as e:
         print(f"Error in Crossword app: {e}")
         raise
 
