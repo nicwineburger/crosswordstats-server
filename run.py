@@ -26,7 +26,7 @@ CLOUD_PLOT_FILENAME = "plot.svg"
 def update_csv(nyt_token, start_date):
     try:
         subprocess.run(
-            ["crossword", "t", nyt_token, "-s", start_date, LOCAL_CSV_FILENAME],
+            ["crossword", "-t", nyt_token, "-s", start_date, LOCAL_CSV_FILENAME],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
