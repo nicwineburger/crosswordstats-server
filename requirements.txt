@@ -5,5 +5,9 @@ minio
 Flask
 gunicorn
 
+# Dependencies
+numpy>=1.21.0
+matplotlib
+pillow
 
 -r plot/requirements.txt
