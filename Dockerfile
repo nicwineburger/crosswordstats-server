@@ -31,7 +31,7 @@ COPY plot/requirements.txt ./plot/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code
-COPY cloud_run.py .
+COPY run.py .
 COPY plot/plot.py ./plot/plot.py
 
 # Expose the port Flask will run on
