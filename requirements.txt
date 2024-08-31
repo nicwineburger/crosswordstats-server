@@ -6,8 +6,9 @@ Flask
 gunicorn
 
 # Dependencies
-numpy>=1.21.0
-matplotlib
-pillow
+matplotlib>=3.4.0,<3.5.0 
+pillow>=8.0.0,<9.0.0
+numpy>=1.21.0,<1.23.0
+
 
 -r plot/requirements.txt
