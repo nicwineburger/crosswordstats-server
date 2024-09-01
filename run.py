@@ -28,7 +28,6 @@ def update_csv(nyt_token, start_date):
     try:
         process = subprocess.Popen(
             ["crossword", "-t", nyt_token, "-s", start_date, LOCAL_CSV_FILENAME],
-            check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True
