@@ -42,5 +42,5 @@ EXPOSE 8080
 ENV PORT=8080
 
 # Command to run the Flask server with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "8", "--timeout", "0", "run:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "8", "--timeout", "0", "--capture-output" "run:app"]
 
