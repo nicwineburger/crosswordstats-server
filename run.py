@@ -2,7 +2,7 @@
 
 import os
 import subprocess
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response, jsonify
 from minio import Minio
 from minio.error import S3Error
 import plot.plot as plot
@@ -17,20 +17,36 @@ minio_client = Minio(
     secure=False  # Change to True if using HTTPS
 )
 
-# Filenames for stats CSV and plot files
+# Variables
 LOCAL_CSV_FILENAME = "data.csv"
 LOCAL_PLOT_FILENAME = "plot.svg"
 CLOUD_CSV_FILENAME = "data.csv"
 CLOUD_PLOT_FILENAME = "plot.svg"
+BUCKET_NAME = os.environ["MINIO_BUCKET_NAME"]
 
 def update_csv(nyt_token, start_date):
     try:
-        subprocess.run(
+        process = subprocess.Popen(
             ["crossword", "-t", nyt_token, "-s", start_date, LOCAL_CSV_FILENAME],
             check=True,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=true
         )
+        
+        # Stream the output line by line
+        for line in iter(process.stdout.readline, ''):
+            yield line
+        process.stdout.close()
+        process.wait()
+        
+        if process.returncode == 0:
+            generate_plot()
+            upload_file_to_minio(LOCAL_CSV_FILENAME, CLOUD_CSV_FILENAME)
+            upload_file_to_minio(LOCAL_PLOT_FILENAME, CLOUD_PLOT_FILENAME)
+        else:
+            yield f"Server process failed with error code {process.returncode}"
+        
     except subprocess.CalledProcessError as e:
         print(f"Error in Crossword app: {e}")
         raise
@@ -38,15 +54,16 @@ def update_csv(nyt_token, start_date):
 def generate_plot():
     plot.generate(LOCAL_CSV_FILENAME, LOCAL_PLOT_FILENAME)
 
-def upload_file_to_minio(bucket_name, local_file_path, object_name):
+def upload_file_to_minio(local_file_path, object_name):
     try:
-        if not minio_client.bucket_exists(bucket_name):
-            minio_client.make_bucket(bucket_name)
+        if not minio_client.bucket_exists(BUCKET_NAME):
+            minio_client.make_bucket(BUCKET_NAME)
 
-        minio_client.fput_object(bucket_name, object_name, local_file_path)
-        print(f"Successfully uploaded {object_name} to bucket {bucket_name}.")
+        minio_client.fput_object(BUCKET_NAME, object_name, local_file_path)
+        print(f"Successfully uploaded {object_name} to bucket {BUCKET_NAME}.")
     except S3Error as e:
         print(f"Error uploading to MinIO: {e}")
+        raise
 
 @app.route("/", methods=["POST"])
 def update_database_and_plot():
@@ -61,16 +78,8 @@ def update_database_and_plot():
         return jsonify({"error": "Start Date is required"}), 400
 
     try:
-        update_csv(nyt_token, start_date)
-        generate_plot()
-
-        # Replace with your MinIO bucket name
-        bucket_name = "your-minio-bucket-name"
-        upload_file_to_minio(bucket_name, LOCAL_CSV_FILENAME, CLOUD_CSV_FILENAME)
-        upload_file_to_minio(bucket_name, LOCAL_PLOT_FILENAME, CLOUD_PLOT_FILENAME)
-
-        return jsonify({"message": "Success!"}), 200
-
+        return Response(update_csv(nyt_token, start_date), content_type='text/plain')
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
