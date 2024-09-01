@@ -35,6 +35,7 @@ def update_csv(nyt_token, start_date):
         
         # Stream the output line by line
         for line in iter(process.stdout.readline, ''):
+            print(line)
             yield line
         process.stdout.close()
         process.wait()
