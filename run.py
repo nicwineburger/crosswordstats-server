@@ -31,7 +31,7 @@ def update_csv(nyt_token, start_date):
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            text=true
+            text=True
         )
         
         # Stream the output line by line
